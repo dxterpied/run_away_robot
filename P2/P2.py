@@ -75,14 +75,14 @@ def estimate_next_pos(measurement, OTHER=None):
         angle = 0
         num_measurements = 0
         total_d = 0
-        total_angle = 0
+        total_turning = 0
 
     else:
         prev_num_measurements = OTHER[0]
         prev_measurement = OTHER[1]
         prev_angle = OTHER[2]
         total_d = OTHER[3]
-        total_angle = OTHER[4]
+        total_turning = OTHER[4]
 
         num_measurements = prev_num_measurements + 1
 
@@ -90,24 +90,24 @@ def estimate_next_pos(measurement, OTHER=None):
         total_d += d_size
         average_d = total_d / num_measurements
 
-        angle = atan2(measurement[1]-prev_measurement[1],
-                      measurement[0]-prev_measurement[0])
-        angle_step = angle - prev_angle
+        heading = atan2(measurement[1] - prev_measurement[1],
+                        measurement[0] - prev_measurement[0])
+        angle_step = heading - prev_angle
         print "Angle step", angle_step, (angle_step % (
-            2*pi)), angle_trunc(angle_step)
+            2 * pi)), angle_trunc(angle_step)
 
-        total_angle += angle_trunc(angle_step)
-        average_angle = total_angle / num_measurements
+        total_turning += angle_trunc(angle_step)
+        average_angle = total_turning / num_measurements
 
-        new_angle = angle + average_angle
+        new_heading = heading + average_angle
 
-        px = measurement[0] + average_d*cos(new_angle)
-        py = measurement[1] + average_d*sin(new_angle)
+        px = measurement[0] + average_d * cos(new_heading)
+        py = measurement[1] + average_d * sin(new_heading)
 
         xy_estimate = (px, py)
 
     OTHER = [num_measurements, measurement,
-             angle, total_d, total_angle]
+             angle, total_d, total_turning]
 
     return xy_estimate, OTHER
 
@@ -196,18 +196,18 @@ def demo_grading_visual(estimate_next_pos_fcn, target_bot, OTHER=None):
         if ctr == 1000:
             print "Sorry, it took you too many steps to localize the target."
         # More Visualization
-        measured_broken_robot.setheading(target_bot.heading*180/pi)
+        measured_broken_robot.setheading(target_bot.heading * 180 / pi)
         measured_broken_robot.goto(
-            measurement[0]*size_multiplier, measurement[1]*size_multiplier-200)
+            measurement[0] * size_multiplier, measurement[1] * size_multiplier - 200)
         measured_broken_robot.stamp()
-        broken_robot.setheading(target_bot.heading*180/pi)
-        broken_robot.goto(target_bot.x*size_multiplier,
-                          target_bot.y*size_multiplier-200)
+        broken_robot.setheading(target_bot.heading * 180 / pi)
+        broken_robot.goto(target_bot.x * size_multiplier,
+                          target_bot.y * size_multiplier - 200)
         broken_robot.stamp()
-        prediction.setheading(target_bot.heading*180/pi)
+        prediction.setheading(target_bot.heading * 180 / pi)
         prediction.goto(
-            position_guess[0]*size_multiplier,
-            position_guess[1]*size_multiplier-200)
+            position_guess[0] * size_multiplier,
+            position_guess[1] * size_multiplier - 200)
         prediction.stamp()
         # End of Visualization
     return localized
@@ -222,9 +222,10 @@ def naive_next_pos(measurement, OTHER=None):
     xy_estimate = OTHER
     return xy_estimate, OTHER
 
+
 # This is how we create a target bot. Check the robot.py file to understand
 # How the robot class behaves.
-test_target = robot(2.1, 4.3, 0.5, 2*pi / 34.0, 1.5)
+test_target = robot(2.1, 4.3, 0.5, 2 * pi / 34.0, 1.5)
 measurement_noise = 0.05 * test_target.distance
 test_target.set_noise(0.0, 0.0, measurement_noise)
 

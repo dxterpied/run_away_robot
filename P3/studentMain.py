@@ -96,7 +96,7 @@ def demo_grading(hunter_bot, target_bot, next_move_fcn, OTHER=None):
         if distance > max_distance:
             distance = max_distance
 
-        # We move the hunter according to your instructions
+        # We move the hunter according to your instructions 
         hunter_bot.move(turning, distance)
 
         # The target continues its (nearly) circular motion.
