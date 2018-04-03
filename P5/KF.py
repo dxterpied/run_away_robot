@@ -10,8 +10,8 @@ class UKF(object):
         self.x.value[1][0] = measurement[1]
         self.P = matrix([[]])
         self.P.identity(self.n_x)
-        self.P.value[0][0] = 1000
-        self.P.value[1][1] = 1000
+        self.P.value[0][0] = 1
+        self.P.value[1][1] = 1
 
         self.n_aug = 5
         self.lambda_ = 3 - self.n_aug
@@ -32,13 +32,13 @@ class UKF(object):
             self.weights.value[i][0] = _
 
         # noise
-        self.std_x = 100
-        self.std_y = 100
-        self.std_a = 1
-        self.std_omiga = 1
+        self.std_x = 3
+        self.std_y = 3
+        self.std_a = 0
+        self.std_omiga = 0
 
         # R
-        self.R = matrix([[1, 0], [0, 1]])
+        self.R = matrix([[10, 0], [0, 10]])
 
         # Xisg_aug
         self.Xsig_aug = matrix([[]])
@@ -65,8 +65,7 @@ class UKF(object):
             for j in range(self.n_aug):
                 self.Xsig_aug.value[i][j+1] = x_aug.value[i][0] + \
                     sqrt(self.lambda_ + self.n_aug) * A.value[i][j]
-                self.Xsig_aug.value[i][j+1+self.n_aug] =
-                x_aug.value[i][0] - \
+                self.Xsig_aug.value[i][j+1+self.n_aug] = x_aug.value[i][0] - \
                     sqrt(self.lambda_ + self.n_aug) * A.value[i][j]
 
     def SigmaPointPrediction(self, dt=1.):
